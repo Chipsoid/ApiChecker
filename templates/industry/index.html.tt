@@ -1,0 +1,117 @@
+[%
+    WRAPPER 'layouts/default.html.tt'
+    title = 'API Checker &mdash; Большой Брат следит за тобой, %username%'
+%]
+<h1>[% header %]</h1>
+
+<div id="filter-bar"></div>
+<table id="tbl" data-toggle="table" data-sort-name="id" data-sort-order="desc" data-toolbar="#filter-bar" data-show-columns="true" data-show-filter="true" data-search="true" data-pagination="true" data-page-list="[50, 100, 200, 500]" data-page-size="100">
+    <thead>
+        <tr>
+            <th data-field="job_id" data-align="right" data-sortable="true" data-visible="false">#</th>
+            <th data-field="corporation_name" data-align="left" data-sortable="true" data-visible="true">Корпа</th>
+            <th data-field="installer_name" data-align="left" data-sortable="true" data-visible="true">Установил</th>
+            <th data-field="facility_id" data-align="left" data-sortable="true" data-visible="true">Завод</th>
+            <th data-field="solar_system_name" data-align="left" data-sortable="true">Система</th>
+            <th data-field="station_id" data-align="left" data-sortable="true" data-visible="true">Станция</th>
+            <th data-field="activity_id" data-align="left" data-sortable="true">процесс</th>
+            <th data-field="blueprint_type_name" data-align="left" data-sortable="true">Чертеж</th>
+            <th data-field="blueprint_location_id" data-align="left" data-sortable="true" data-visible="true">лежит в</th>
+            <th data-field="output_location_id" data-align="left" data-sortable="true" data-visible="true">Выгрузка в</th>
+            <th data-field="runs" data-align="left" data-sortable="true">циклов</th>
+            <th data-field="cost" data-align="left" data-sortable="true" data-visible="false">стоимость</th>
+            <th data-field="licensed_runs" data-align="left" data-sortable="true" data-visible="false">прогонов</th>
+            <th data-field="probability" data-align="left" data-sortable="true" data-visible="false">Шанс</th>
+            <th data-field="product_type_name" data-align="left" data-sortable="true">Продукт</th>
+            <th data-field="status" data-align="left" data-sortable="true">Статус</th>
+            <th data-field="start_date" data-align="left" data-sortable="true">Начало</th>
+            <th data-field="end_date" data-align="left" data-sortable="true">Конец</th>
+            <th data-field="pause_date" data-align="left" data-sortable="false" data-visible="false">Пауза</th>
+            <th data-field="completed_date" data-align="left" data-sortable="true">Завершен</th>
+            <th data-field="completed_character_id" data-align="left" data-sortable="true" data-visible="false">Завершил</th>
+            <th data-field="successful_runs" data-align="left" data-sortable="true" data-visible="false">Успешных циклов</th>
+
+        </tr>
+<!--           `job_id` bigint(20) NOT NULL,
+  `corporation_id` bigint(20) NULL,
+  `installer_id`   bigint(20) NOT NULL,
+  `installer_name`   varchar(150) NOT NULL,
+  `facility_id` int(11) NOT NULL,
+  `solar_system_id` int(11) NOT NULL,
+  `solar_system_name` varchar(100) NOT NULL,
+  `station_id` int(11) NOT NULL,
+  `activity_id` int(11) NOT NULL,
+  `blueprint_id` bigint(20) NOT NULL,
+  `blueprint_type_id` int(11) NOT NULL,
+  `blueprint_type_name` varchar(200) NOT NULL,
+  `blueprint_location_id` bigint(20) NOT NULL,
+  `output_location_id` bigint(20) NOT NULL,
+  `runs` int(11) NOT NULL,
+  `cost` double(20,2) NOT NULL,
+  `licensed_runs` int(11) NOT NULL,
+  `probability` double(20,2) NOT NULL,
+  `product_type_id` int(11) NOT NULL,
+  `product_type_name` varchar(200) NOT NULL,
+  `status` int(11) NOT NULL,
+  `time_in_seconds` int(11) NOT NULL,
+  `start_date` datetime NOT NULL,
+  `end_date` datetime NOT NULL,
+  `pause_date` datetime NOT NULL,
+  `completed_date` datetime NOT NULL,
+  `completed_character_id` bigint(20) NOT NULL,
+  `successful_runs` int(11) NOT NULL, -->
+    </thead>
+    [% 
+        activity_name = ['стройка', 'Researching Technology', 'Researching Time Productivity', 'Researching Material Productivity', 'Copy','Копирование',
+        'Reverse Engineering','Invention']
+     %]
+    [% FOREACH j = industry %]
+        <tr>
+            <td>[% j.job_id %]</td>
+            <td>[% j.corporation_id %]</td>
+            <td><a href="/character/[% j.installer_id %]" target="_blank">[% j.installer_name %]</a></td>
+            <td>[% j.facility_name || j.facility_id %]</td>
+            <td>[% j.solar_system_name %]</td>
+            <td>[% j.station_name || j.station_id %]</td>
+            <td>[% activity_name.${j.activity_id} %]</td>
+            <td>[% j.blueprint_type_name %]</td>
+            <td>[% j.blueprint_location_name || j.blueprint_location_id %]</td>
+            <td>[% j.output_location_name || j.output_location_id %]</td>
+            <td>[% j.runs %]</td>
+            <td>[% j.cost %]</td>
+            <td>[% j.licensed_runs %]</td>
+            <td>[% j.probability %]</td>
+            <td>[% j.product_type_name %]</td>
+            <td>[% IF j.status == 1; %]выполняется[% ELSE %] [% END %]</td>
+            <td>[% j.start_date %]</td>
+            <td>[% j.end_date %]</td>
+            <td>[% j.pause_date %]</td>
+            <td>[% IF j.completed_date == '0001-01-01 00:00:00' %]-[% ELSE %][% j.completed_date %][% END %]</td>
+            <td>[% j.completed_character_id %]</td>
+            <td>[% j.successful_runs %]</td>
+        </tr>
+    [% END %]
+</table>
+
+
+<script>
+    function operateFormatter(value, row, index) {
+        return [
+            '<a class="details ml10" href="#details" title="Details">',
+                '<i class="glyphicon glyphicon-th-list"></i>',
+            '</a>'
+        ].join(' ');
+    }
+
+    window.operateEvents = {
+        'click .details': function (e, value, row, index) {
+        }
+    };
+
+    $().ready(function() {
+
+    });
+
+</script>
+
+[% END %]

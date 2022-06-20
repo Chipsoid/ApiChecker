@@ -1,0 +1,148 @@
+[%
+    WRAPPER 'layouts/default.html.tt'
+    title = 'API Checker &mdash; Большой Брат следит за тобой, %username%'
+%]
+[% PROCESS 'layouts/blocks.html.tt' %]
+<a href="/character/[% char_id %]">&larr; к общей информации о пилоте</a>
+<h1>[% header %]</h1>
+<h6><small>Обновится не ранее [% contracts.0.cached_until %]</small></h6>
+
+[% MACRO contragent BLOCK %]
+    [% SWITCH ref_id %]
+        [% CASE 42 %]
+            [% client_name %] [% info( info = char_info.$owner_name1, extra = "Купил в: <b>" _ other.station_name _ "</b><br />Товар: <b>" _ other.type_name _ "</b><br />Кол-во: <b>" _ other.quantity _ '</b>' ) %]
+        [% CASE 2 %]
+            [% client_name %] [% info( info = char_info.$owner_name1, extra = "Продал в: <b>" _ other.station_name _ "</b><br />Товар: <b>" _ other.type_name _ "</b><br />Кол-во: <b>" _ other.quantity _ '</b>' ) %]
+        [% CASE 35 %]
+            [% arg_name1 %] [% info( info = char_info.$arg_name1 ) IF arg_name1 != char_name && arg_name1 != 'CONCORD'  %]
+        [% CASE 10 %]
+            [% IF incoming %]
+              [% owner_name1 %] [% info( info = char_info.$owner_name1, extra = "Сделка в: $arg_name1" ) %]
+            [% ELSE %]
+              [% owner_name2 %] [% info( info = char_info.$owner_name2, extra = "Сделка в: $arg_name1" ) %]
+            [% END %]
+        [% CASE %]
+            [% IF char_name == owner_name1  %]
+                [% owner_name2 %] 
+            [% ELSE %]
+                [% owner_name1 %] 
+            [% END %]
+
+            
+    [% END %]
+
+[% END %]
+
+[%  h.bootstrap_pagination( page, page_count, {
+    round => 4,
+    outer => 2,
+    class => 'pagination-md',
+    query => "&by=$by&sort=$sort"
+    start => 0,
+    param => 'page' } ) %]
+[% revert_sort = sort == 'DESC' ? 'ASC' : 'DESC' %]
+
+<table class="table table-striped table-condensed tablesorter">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th width="200">Создан</th>
+        <th width="200">Тип</th>
+        <th style="text-align:center;">Создал</th>
+        <th style="text-align:center;">На кого</th>
+        <th style="text-align:center;">Принял</th>
+        <th style="text-align:center;">Сумма</th>
+        <th style="text-align:center;">Объем</th>
+        <th style="text-align:center;">Доступность</th>
+        <th width="200">Статус</th>
+        <th width="200">Принят</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    [% FOREACH record = contracts %]
+      <tr>
+          <td>[% record.contract_id %]</td>
+          <td width="200">[% record.date_issued %]</td>
+          <td width="200">[% record.type %]</td>
+          <td>[% record.issuer_name %]</td>
+          <td>[% record.assignee_name %]</td>
+          <td>[% record.acceptor_name %]</td>
+          <td class="text-right">[% record.price | format_sum %]</td>
+          <td class="text-right">[% record.volume %]&nbsp;m<sup>3</sup></td>
+          <td class="text-center">[% record.availability %]</td>
+          <td style="width:200px;">[% record.status %]</td>
+          <td width="200">[% record.date_accepted %]</td>
+          <td><a href="#showContract" data-toggle="modal" class="show_contract_body" rel="[% record.contract_id %]" data-char="[% char_id %]"><i class="glyphicon glyphicon-search"></i></a>
+              <div class="body_[% record.contract_id %] hide"></div></td>
+      </tr>
+    [% END %]
+    </tbody>
+</table>
+[%  h.bootstrap_pagination( page, page_count, {
+    round => 4,
+    outer => 2,
+    class => 'pagination-md',
+    query => "&by=$by&sort=$sort"
+    start => 0,
+    param => 'page' } ) %]
+
+
+<div id="showContract" class="modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="showContractLabel"></h3>
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                  <div class="col-sm-3">Создал: </div><div class="col-sm-7 showContractIssuer"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">На: </div><div class="col-sm-7 showContractAssignee"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">Принял: </div><div class="col-sm-7 showContractAcceptor"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">Тип: </div><div class="col-sm-7 showContractType"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">Создан: </div><div class="col-sm-7 showContractIssued"></div>
+                  <div class="col-sm-3">Истекает: </div><div class="col-sm-7 showContractExpired"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">Принят: </div><div class="col-sm-7 showContractAccepted"></div>
+                  <div class="col-sm-3">Исполнен: </div><div class="col-sm-7 showContractCompleted"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">Создан на станции: </div><div class="col-sm-7 showContractStartStation"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">Принят на станции: </div><div class="col-sm-7 showContractEndStation"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">Дней на исполнение: </div><div class="col-sm-7 showContractNumDays"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">Цена: </div><div class="col-sm-7 showContractPrice"></div>
+                  <div class="col-sm-3">Вознаграждение: </div><div class="col-sm-7 showContractReward"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">Объем: </div><div class="col-sm-7 showContractVolume"></div>
+              </div>
+              <div class="row">
+                  <div class="modal-header">
+                      <h3 id="showContractItemsLabel">Предметы</h3>
+                  </div>
+                  <div class="col-sm-10 showContractBody"></div>
+              </div>
+          </div>
+      </div>
+    </div>
+</div>
+
+
+[% END %]
+

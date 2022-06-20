@@ -1,0 +1,28 @@
+DROP TABLE IF EXISTS `character_wallet_journal`;
+CREATE TABLE IF NOT EXISTS `character_wallet_journal` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `character_id` bigint(20) NOT NULL,
+  `ref_id` bigint(20) NOT NULL,
+  `ref_type_id` int(11) NOT NULL,
+  `date` datetime NOT NULL,
+  `owner_name1` varchar(100) NOT NULL,
+  `owner_id1` bigint(20) NOT NULL,
+  `owner_name2` varchar(100) NOT NULL,
+  `owner_id2` bigint(20) NOT NULL,
+  `arg_id1` bigint(20) NOT NULL,
+  `arg_name1` varchar(100) NOT NULL,
+  `reason` varchar(500) NOT NULL,
+  `tax_receiver_id` varchar(250) NOT NULL,
+  `amount` decimal(16,2) NOT NULL,
+  `tax_amount` varchar(250) NOT NULL,
+  `balance` decimal(16,2) NOT NULL,
+  `cached_until` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `character_id` (`character_id`),
+  KEY `ref_id` (`ref_id`),
+  KEY `ref_type_id` (`ref_type_id`),
+  KEY `owner_id1` (`owner_id1`),
+  KEY `owner_id2` (`owner_id2`),
+  KEY `arg_id1` (`arg_id1`),
+  KEY `date` (`date`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;

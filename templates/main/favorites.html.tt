@@ -1,0 +1,1 @@
+[% PROCESS 'main/index.html.tt' %]

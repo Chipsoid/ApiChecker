@@ -1,0 +1,91 @@
+[%
+    WRAPPER 'layouts/default.html.tt'
+    title = 'API Checker &mdash; Большой Брат следит за тобой, %username%'
+%]
+<h1>[% header %]</h1>
+
+
+<div id="filter-bar"></div>
+<table id="tbl" data-toggle="table" data-sort-name="id" data-sort-order="desc" data-toolbar="#filter-bar" data-show-columns="true" data-show-filter="true" data-search="true" data-pagination="true" data-page-list="[50, 100, 200]" data-page-size="50">
+    <thead>
+        <tr>
+            <th data-field="id" data-align="right" data-sortable="true">#</th>
+            <th data-field="corp_key_id" data-align="left" data-sortable="true" data-visible="true">ключ корпы</th>
+            <th data-field="item_id" data-align="left" data-sortable="true" data-visible="false">item_id</th>
+            <th data-field="region_name" data-align="left" data-sortable="true">Регион</th>
+            <th data-field="const_name" data-align="left" data-sortable="true">Конста</th>
+            <th data-field="moon_id" data-align="left" data-sortable="true">Сиса-Планета-Луна</th>
+            <th data-field="moon_mat" data-align="left" data-sortable="true">Мунмат</th>
+            <th data-field="type_id" data-align="left" data-sortable="true">Тип</th>
+            <th data-field="standing_owner_id" data-align="center" data-sortable="true">Владелец</th>
+            <th data-field="online_timestamp" data-align="left" data-sortable="true">Онлайн</th>
+            <th data-field="state_timestamp" data-align="center" data-sortable="true">Состояние</th>
+            <th data-field="state" data-align="center" data-sortable="true">Статус</th>
+            <th data-field="fuel" data-align="center" data-sortable="true" data-visible="false">Топляк</th>
+            <th data-field="on_status_drop_standing" data-align="center" data-sortable="true" data-visible="false">on_status_drop_standing</th>
+            <th data-field="deploy_flags" data-align="center" data-sortable="true" data-visible="false">deploy_flags</th>
+            <th data-field="allow_corporation_members" data-align="center" data-sortable="true" data-visible="false">allow_corporation_members</th>
+            <th data-field="allow_alliance_members" data-align="center" data-sortable="true" data-visible="false">allow_alliance_members</th>
+            <th data-field="usage_flags" data-align="center" data-sortable="true" data-visible="false">usage_flags</th>
+            <th data-field="on_status_drop_enabled" data-align="center" data-sortable="true" data-visible="false">on_status_drop_enabled</th>
+            <th data-field="on_aggression" data-align="center" data-sortable="true" data-visible="false">on_aggression</th>
+            <th data-field="on_corporation_war" data-align="center" data-sortable="true" data-visible="false">on_corporation_war</th>
+            <th data-field="on_standing_drop" data-align="center" data-sortable="true" data-visible="false">on_standing_drop</th>
+            <th data-field="use_standings_from" data-align="center" data-sortable="true" data-visible="false">use_standings_from</th>
+        </tr>
+    </thead>
+    [% FOREACH sb = starbases %]
+        <tr>
+            <td>[% sb.id %]</td>
+            <td>[% sb.corp_name %]</td>
+            <td>[% sb.item_id %]</td>
+            <td>[% sb.region_name %]</td>
+            <td>[% sb.const_name %]</td>
+            <td>[% sb.moon_name %]</td>
+            <td>[% sb.moon_mat %]</td>
+            <td>[% sb.type_name %]</td>
+            <td>[% sb.owner_name || sb.standing_owner_id %]</td>
+            <td>[% sb.online_timestamp %]</td>
+            <td>[% sb.state_timestamp %]</td>
+            <td>[% sb.state_name %]</td>
+            <td>
+            [% FOREACH fuel = sb.detail.fuel %]
+                [% fuel.type_name %]&nbsp;:&nbsp;[% fuel.quantity %]<br />
+            [% END %]
+            </td>
+            <td>[% sb.detail.on_status_drop_standing %]</td>
+            <td>[% sb.detail.deploy_flags %]</td>
+            <td>[% sb.detail.allow_corporation_members %]</td>
+            <td>[% sb.detail.allow_alliance_members %]</td>
+            <td>[% sb.detail.usage_flags %]</td>
+            <td>[% sb.detail.on_status_drop_enabled %]</td>
+            <td>[% sb.detail.on_aggression %]</td>
+            <td>[% sb.detail.on_corporation_war %]</td>
+            <td>[% sb.detail.on_standing_drop %]</td>
+            <td>[% sb.detail.use_standings_from %]</td>
+        </tr>
+    [% END %]
+</table>
+
+
+<script>
+    function operateFormatter(value, row, index) {
+        return [
+            '<a class="details ml10" href="#details" title="Details">',
+                '<i class="glyphicon glyphicon-th-list"></i>',
+            '</a>'
+        ].join(' ');
+    }
+
+    window.operateEvents = {
+        'click .details': function (e, value, row, index) {
+        }
+    };
+
+    $().ready(function() {
+
+    });
+
+</script>
+
+[% END %]

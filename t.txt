@@ -1,0 +1,27 @@
+$VAR1 = {
+          'characters' => {
+                            '94701913' => {
+                                          'corporationID' => '1000044',
+                                          'allianceName' => '',
+                                          'corporationName' => 'School of Applied Knowledge',
+                                          'allianceID' => '0',
+                                          'characterName' => 'Milolika Muvila',
+                                          'factionID' => '0',
+                                          'factionName' => ''
+                                        },
+                            '90922771' => {
+                                          'characterName' => 'Chips Merkaba',
+                                          'factionID' => '0',
+                                          'corporationName' => 'The First Foundation',
+                                          'allianceID' => '1208295500',
+                                          'allianceName' => 'SOLAR FLEET',
+                                          'corporationID' => '928827408',
+                                          'factionName' => ''
+                                        }
+                          },
+          'cached_until' => '2014-06-19 21:18:44',
+          'access_mask' => '268435455',
+          'type' => 'Account',
+          'expires' => ''
+        };
+

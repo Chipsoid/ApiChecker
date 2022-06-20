@@ -1,0 +1,102 @@
+[%
+    WRAPPER 'layouts/default.html.tt'
+    title = 'API Checker &mdash; Большой Брат следит за тобой, %username%'
+%]
+[% PROCESS 'layouts/blocks.html.tt' %]
+[% MACRO round(n)
+     GET n + 0.5
+     FILTER format("%d");
+%]
+[% MACRO show_standing BLOCK %]
+  [% standing = standing || 0 %]
+  [% SWITCH standing %]
+      [% CASE 10 %]
+          <span class="plus10" title="+10">+</span>
+      [% CASE 5 %]
+          <span class="plus5" title="+5">+</span>
+      [% CASE 0 %]
+          <span class="neutral" title="0">=</span>
+      [% CASE -5 %]
+          <span class="minus5" title="-5">-</span>
+      [% CASE -10 %]
+          <span class="minus10" title="-10">-</span>
+      [% CASE %]
+          [% standing %]
+  [% END %]
+[% END %]
+
+[% MACRO show_global_standing BLOCK %]
+  [% standing = standing || 0 %]
+  [% IF standing <= 10 && standing > 5 %]
+      <span class="plus10" title="[% round(standing) %]">+</span>
+  [% ELSIF standing <=5 && standing > 0 %]
+      <span class="plus5" title="[% round(standing) %]">+</span>
+  [% ELSIF standing == 0 || ! standing %]
+      <span class="neutral" title="0">=</span>
+  [% ELSIF standing < 0 && standing > -5 %]
+      <span class="minus5" title="[% round(standing) %]">-</span>
+  [% ELSE %]
+      <span class="minus10" title="[% round(standing) %]">-</span>
+  [% END %]
+[% END %]
+<a href="/character/[% char_id %]">&larr; к общей информации о пилоте</a>
+<h1>[% header %]</h1>
+<h6><small>Обновится не ранее [% contacts.0.cached_until %]</small></h6>
+
+<table class="table table-striped table-condensed" style="width: 600px;">
+    <thead>
+    <tr>
+        <th style="width: 200px">Имя</th>
+        <th style="width: 60px">стенд</th>
+        <th style="width: 60px;" title="стенд к корпе, алли или персонажу">корп.стенд</th>
+        <th style="width: 60px" title="стенд к корпе, алли или персонажу">алли.стенд</th>
+        <th style="width: 150px" >Добавлен</th>
+    </tr>
+    </thead>
+    <tbody>
+    [% FOREACH contact = contacts %]
+      [% UNLESS contact.archived_date %]
+        [% cid = contact.contact_name %]
+        <tr>
+            <td><span class="watch_list_[% contact.in_watchlist > 0 ? 'green' : 'red' %]"></span>[% contact.contact_name %] [% IF contact.ticker %][[% contact.ticker %]][% END %] [% info( info = char_info.$cid ) IF char_info.$cid.corporation_id %]</td>
+            <td style="vertical-align: middle;text-align: center;">[% show_standing( standing = contact.standing )%]</td>
+            <td style="vertical-align: middle;text-align: center;">[% show_global_standing( standing = contact.corp_standing )%]</td>
+            <td style="vertical-align: middle;text-align: center;">[% show_global_standing( standing = contact.ally_standing )%]</td>
+            <td>[% contact.added_date %]</td>
+        </tr>
+        [% END %]
+    [% END %]
+    </tbody>
+</table>
+
+
+<h4>Удаленные контакты</h4>
+<table class="table table-striped table-condensed" style="width: 800px;">
+    <thead>
+    <tr>
+        <th style="width: 200px">Имя</th>
+        <th style="width: 60px">стенд</th>
+        <th style="width: 60px;" title="стенд к корпе, алли или персонажу">корп.стенд</th>
+        <th style="width: 60px" title="стенд к корпе, алли или персонажу">алли.стенд</th>
+        <th style="width: 150px">Добавлен</th>
+        <th style="width: 150px">Удален</th>
+    </tr>
+    </thead>
+    <tbody>
+    [% FOREACH contact = contacts %]
+      [% IF contact.archived_date  %]
+      [% cid = contact.contact_name %]
+      <tr>
+          <td><span class="watch_list_[% contact.in_watchlist > 0 ? 'green' : 'red' %]"></span>[% contact.contact_name %] [% IF contact.ticker %][[% contact.ticker %]][% END %] [% info( info = char_info.$cid ) IF char_info.$cid.corporation_id %]</td>
+          <td style="vertical-align: middle;text-align: center;">[% show_standing( standing = contact.standing )%]</td>
+          <td style="vertical-align: middle;text-align: center;">[% show_global_standing( standing = contact.corp_standing )%]</td>
+          <td style="vertical-align: middle;text-align: center;">[% show_global_standing( standing = contact.ally_standing )%]</td>
+          <td style="width: 150px">[% contact.added_date %]</td>
+          <td>[% contact.archived_date %]</td>
+      </tr>
+    [% END %]
+    [% END %]
+    </tbody>
+</table>
+
+[% END %]

@@ -1,0 +1,56 @@
+[%
+    WRAPPER 'layouts/default.html.tt'
+    title = 'API Checker &mdash; Большой Брат следит за тобой, %username%'
+%]
+[% PROCESS 'layouts/blocks.html.tt' %]
+<a href="/character/[% char_id %]">&larr; к общей информации о пилоте</a>
+<h1>[% header %]</h1>
+<h6><small>Обновится не ранее [% transes.0.cached_until %]</small></h6>
+
+[%  h.bootstrap_pagination( page, page_count, {
+    round => 4,
+    outer => 2,
+    class => 'pagination-md',
+    query => "&by=$by&sort=$sort"
+    start => 0,
+    param => 'page' } ) %]
+[% revert_sort = sort == 'DESC' ? 'ASC' : 'DESC' %]
+<table class="table table-striped table-condensed tablesorter">
+    <thead>
+    <tr>
+        <th><a href="?page=[% page %]&by=transaction_date_time&sort=[% revert_sort %]">Дата</a></th>
+        <th><a href="?page=[% page %]&by=transaction_id&sort=[% revert_sort %]">ID</a></th>
+        <th><a href="?page=[% page %]&by=transaction_type&sort=[% revert_sort %]">Тип</a></th>
+        <th><a href="?page=[% page %]&by=client_name&sort=[% revert_sort %]">Контрагент</a></th>
+        <th><a href="?page=[% page %]&by=price&sort=[% revert_sort %]">Сумма</a></th>
+        <th>Кол-во</th>
+        <th><a href="?page=[% page %]&by=type_name&sort=[% revert_sort %]">Название</a></th>
+        <th width="20%"><a href="?page=[% page %]&by=station_name&sort=[% revert_sort %]">Станция</a></th>
+    </tr>
+    </thead>
+    <tbody>
+    [% FOREACH record = transes %]
+      [% client_id = record.client_name %]
+      <tr>
+          <td>[% record.transaction_date_time %]</td>
+          <td>[% record.transaction_id %]</td>
+          <td>[% record.transaction_type %]</td>
+          <td>[% record.client_name %][% info( info = char_info.$client_id ) IF record.client_id && record.client_name != char_id  %]</td>
+          <td class="text-right [% record.transaction_type == 'sell' ? 'positive' : 'negative'  %]">[% record.price | format_sum %]</td>
+          <td>[% record.quantity %]</td>
+          <td>[% record.type_name %]</td>
+          <td>[% record.station_name %]</td>
+      </tr>
+    [% END %]
+    </tbody>
+</table>
+[%  h.bootstrap_pagination( page, page_count, {
+    round => 4,
+    outer => 2,
+    class => 'pagination-md',
+    query => "&by=$by&sort=$sort"
+    start => 0,
+    param => 'page' } ) %]
+
+[% END %]
+

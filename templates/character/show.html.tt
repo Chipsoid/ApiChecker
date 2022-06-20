@@ -1,0 +1,208 @@
+[%
+    WRAPPER 'layouts/default.html.tt'
+    title = 'API Checker &mdash; Большой Брат следит за тобой, %username%'
+%]
+[% USE date %]
+[% cur_date = date.format(date.now, '%Y-%m-%d %H:%M:%S', gmt => 1 ) %]
+
+<a href="/">&larr; к списку пилотов</a>
+<h1>[% header %] <small><a href="/api/force/c[% info.character_id %]" title="Принудительно обновить информацию по персонажу [% info.name %]" class="force_update"><i class="glyphicon glyphicon-import"></i></a></small></h1>
+<h6><small>Обновится не ранее [% info.cached_until %]</small></h6>
+
+<div class="row">
+  <div class="col-md-2"><img src="http://image.eveonline.com/Character/[% info.character_id %]_128.jpg" class="img-thumbnail" /></div>
+  <div class="col-md-8">
+      <table class="table">
+        <tr>
+            <th>Пилот</th>
+            <td>[% info.name %] <i class="icon-large icon-[% info.gender == 'Female' ? 'girl' : 'user' %]"></i><br />
+            <sub>[% info.race %] - [% info.blood_line %] - [% info.ancestry %]</sub></td>
+            <th>Дата создания</th>
+            <td>[% info.date_of_birth %]</td>
+        </tr>
+        <tr>
+            <th>Клон</th><td>[% info.itemName %]</td>
+            <th>Оплачен до</th>
+            <td class="[% account_status.0.not_payed ? 'not_payed' : '' %]">[% account_status.0.paid_until %]</td>
+        </tr>
+        <tr>
+            <th>Баланс<br />Ассетов</th>
+            <td>[% info.balance | format_sum %] ISK<br />[% assets_sum | format_sum %] ISK</td>
+            <th>Скилл-поинты</th><td>[% skill_points | format_number_triads  %] SP</td>
+        </tr>
+        <tr>
+            <th>Усталость</th><td>[% time_diff(info.jump_fatigue, cur_date ) > 0 ? 'нет' : info.jump_fatigue %]</td>
+            <th>Таймер</th><td>[% time_diff(info.jump_activation, cur_date ) > 0 ? 'нет' : info.jump_activation %]</td>
+        </tr>
+        <tr>
+            <td colspan="4" class="links">
+              <a href="/character/journal/[% info.character_id %]">Журнал ([% counts.wallet_journal %])</a>
+              <a href="/character/transactions/[% info.character_id %]">Транзакции ([% counts.wallet_transactions %])</a>
+              <a href="/character/assets/[% info.character_id %]">Ассеты ([% counts.assets %])</a>
+              <a href="/character/contacts/[% info.character_id %]">Контакты ([% counts.contacts %])</a>
+              <a href="/character/contracts/[% info.character_id %]">Контракты ([% counts.contracts %])</a>
+              <a href="/character/mails/[% info.character_id %]">Почта ([% counts.mails %])</a>
+              <a href="/character/log/[% info.character_id %]">АПИ лог</a>
+            </td>
+        </tr>
+      </table>
+  </div>
+  <div class="col-md-2">
+      <h6>Пилоты на этом аккаунте</h6>
+      [% FOREACH char = chars %]
+          [% IF char.character_id != info.character_id %]
+            <a href="/character/[% char.character_id %]" style="display: block; vertical-align: top;">
+                <img src="http://image.eveonline.com/Character/[% char.character_id %]_32.jpg" class="pull-left" /> <span style="font-size: 8pt; margin-left: 5px; ">[% char.character_name %]<br /><span style="margin-left: 38px; color: #555; display: block; overflow: hidden; width: 120px; height: 14px;">[% char.corporation_name %]</span></span>
+            </a>
+          [% END %]
+      [% END %]
+  </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-6">
+         <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Опыт работы</h3>
+            </div>
+            <div class="panel-body">
+              <table class="table">
+                      <tr>
+                          <th>Корпорация</th>
+                          <th colspan="2">Даты</th>
+                      </tr>
+                  [% FOREACH record = employ_history %]
+                      <tr>
+                          <td class="[% record.is_npc ? 'is_npc' : '' %]">[% record.name || record.corporation_name || record.corporation_id %] [% IF record.ticker %][[% record.ticker %]][% END %]</td>
+                          [% IF loop.first %]
+                          <td>[% record.start_date %]</td><td>по сей день</td>
+                          [% ELSE %]
+                           <td>[% record.start_date %]</td><td>[% loop.prev.start_date %]</td>
+                          
+                          [% END %]
+                      </tr>
+                  [% END %]
+              </table>
+            </div>
+        </div>
+    </div>
+
+     <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Скиллы</h3>
+            </div>
+            <div class="panel-body">
+                [% IF skill_train %]
+                <div style="margin: 10px 0px; padding: 5px; background-color: #eee; border: 1px solid #eee; border-radius: 5px; ">
+                  Изучает: <b>[% skill_train.skill_name %]</b> в <b>[% skill_train.to_level %]</b> Закончит: [% skill_train.end_time %]
+                </div>
+                [% END %]
+                <div class="accordion" id="skills">
+                [% SET cur_group = ''; %]
+                [% FOREACH skill = char_skills %]
+                    [%  IF cur_group != skill.groupName %]
+                        [% IF cur_group %]
+                              </table>
+                          </div>
+                        </div>
+                        </div>
+                        [% END %]
+                        [% cur_group = skill.groupName %]
+                        <div class="accordion-group">
+                          <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#skills" href="#[% skill.groupID _ 'group' %]">
+                              [% skill.groupName %] <small class="pull-right">( [% skills_info.$cur_group.points %] SP&nbsp;&nbsp;&nbsp;[% skills_info.$cur_group.in_five || 0 %] скиллов в 5 )</small>
+                            </a>
+                          </div>
+                          <div id="[% skill.groupID _ 'group' %]" class="accordion-body collapse">
+                            <div class="accordion-inner">
+                                <table class="table">
+                    [% END %]
+                              <tr>
+                                  <td>[% skill.typeName %]</td><td><small><small>[% skill.skill_points %] SP</small></small></td><td class="pull-right">[% skill.level %]</td>
+                              </tr>  
+                    [% IF loop.last %]
+                          </table>
+                          </div>
+                        </div>
+                      </div>
+                    [% END %] 
+                [% END %]
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+         <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Атрибуты</h3>
+            </div>
+            <div class="panel-body">
+              <table class="table">
+                      <tr>
+                          <th>memory</th><td>[% char_attrs.0.memory %]</td>
+                      </tr>
+                      <tr>
+                          <th>intelligence</th><td>[% char_attrs.0.intelligence %]</td>
+                      </tr>
+                      <tr>
+                          <th>perception</th><td>[% char_attrs.0.perception %]</td>
+                      </tr>
+                      <tr>
+                          <th>willpower</th><td>[% char_attrs.0.willpower %]</td>
+                      </tr>
+                      <tr>
+                          <th>charisma</th><td>[% char_attrs.0.charisma %]</td>
+                      </tr>
+              </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+         <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Импланты</h3>
+            </div>
+            <div class="panel-body">
+              <table class="table">
+                      [% FOREACH imp = implants %]
+                      <tr>
+                          <td><img src="/i/types/[% imp.type_id %]_32.png" width="16" height="16" />&nbsp;[% imp.name %]</td>
+                      </tr>
+                      [% END %]
+              </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+         <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Джамп-клоны</h3>
+            </div>
+            <div class="panel-body">
+              <p>Последний раз прыгал в клона: <b>[% info.clone_jump_date %]</b></p>
+              <p>Сможет прыгнуть в клона: <b>[% time_diff(info.jump_last_update, cur_date) > 0  ? 'сейчас' : info.jump_last_update %]</b></p>
+              <table class="table">
+                      [% FOREACH clone = jump_clones %]
+                      <tr>
+                          <td>[% clone.name || 'Джамп-клон' %]</td><td>[% clone.itemName || clone.station_name %]</td>
+                      </tr>
+                      [% END %]
+              </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+[% END %]
+

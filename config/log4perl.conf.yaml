@@ -1,0 +1,104 @@
+---
+log4perl_categories:
+    log4perl.category.stdout           : INFO, stdout
+    log4perl.category.stderr           : INFO, stderr
+    log4perl.category.api_cron         : ALL, api_cron
+    log4perl.category.info_cron        : ALL, info_cron
+    log4perl.category.price_cron       : ALL, price_cron
+    log4perl.category.supers_cron       : ALL, supers_cron
+    log4perl.category.users            : ALL, users
+    log4perl.category.files            : ALL, files
+    log4perl.category.ts3              : ALL, ts3
+    log4perl.category.corp_cron        : ALL, corp_cron
+    log4perl.category.industry_cron        : ALL, industry_cron
+    
+
+log4perl_appenders:
+    log4perl.appender.users          : Log::Log4perl::Appender::File
+    log4perl.appender.users.utf8     : 1
+    log4perl.appender.users.filename : "/var/log/api_checker/users.log"
+    log4perl.appender.users.umask    : 0000
+    log4perl.appender.users.recreate : true
+    log4perl.appender.users.create_at_logtime : true
+    log4perl.appender.users.layout   : PatternLayout::Multiline
+    log4perl.appender.users.layout.ConversionPattern : "%d{yyyy-MM-dd HH:mm:ss} %p %M %L :> %m%n"
+
+    log4perl.appender.ts3          : Log::Log4perl::Appender::File
+    log4perl.appender.ts3.utf8     : 1
+    log4perl.appender.ts3.filename : "/var/log/api_checker/ts3.log"
+    log4perl.appender.ts3.umask    : 0000
+    log4perl.appender.ts3.recreate : true
+    log4perl.appender.ts3.create_at_logtime : true
+    log4perl.appender.ts3.layout   : PatternLayout::Multiline
+    log4perl.appender.ts3.layout.ConversionPattern : "%d{yyyy-MM-dd HH:mm:ss} %p %M %L :> %m%n"
+
+    log4perl.appender.files          : Log::Log4perl::Appender::File
+    log4perl.appender.files.utf8     : 1
+    log4perl.appender.files.filename : "/var/log/api_checker/files.log"
+    log4perl.appender.files.umask    : 0000
+    log4perl.appender.files.recreate : true
+    log4perl.appender.files.create_at_logtime : true
+    log4perl.appender.files.layout   : PatternLayout::Multiline
+    log4perl.appender.files.layout.ConversionPattern : "%d{yyyy-MM-dd HH:mm:ss} %p %M %L :> %m%n"
+    
+    log4perl.appender.industry_cron          : Log::Log4perl::Appender::File
+    log4perl.appender.industry_cron.utf8     : 1
+    log4perl.appender.industry_cron.filename : "/var/log/api_checker/industry_cron.log"
+    log4perl.appender.industry_cron.umask    : 0000
+    log4perl.appender.industry_cron.recreate : true
+    log4perl.appender.industry_cron.create_at_logtime : true
+    log4perl.appender.industry_cron.layout   : PatternLayout::Multiline
+    log4perl.appender.industry_cron.layout.ConversionPattern : "%d{yyyy-MM-dd HH:mm:ss} %p %M %L :> %m%n"
+    
+    log4perl.appender.api_cron          : Log::Log4perl::Appender::File
+    log4perl.appender.api_cron.utf8     : 1
+    log4perl.appender.api_cron.filename : "/var/log/api_checker/api_cron.log"
+    log4perl.appender.api_cron.umask    : 0000
+    log4perl.appender.api_cron.recreate : true
+    log4perl.appender.api_cron.create_at_logtime : true
+    log4perl.appender.api_cron.layout   : PatternLayout::Multiline
+    log4perl.appender.api_cron.layout.ConversionPattern : "%d{yyyy-MM-dd HH:mm:ss} %p %M %L :> %m%n"
+
+    log4perl.appender.info_cron          : Log::Log4perl::Appender::File
+    log4perl.appender.info_cron.utf8     : 1
+    log4perl.appender.info_cron.filename : "/var/log/api_checker/info_cron.log"
+    log4perl.appender.info_cron.umask    : 0000
+    log4perl.appender.info_cron.recreate : true
+    log4perl.appender.info_cron.create_at_logtime : true
+    log4perl.appender.info_cron.layout   : PatternLayout::Multiline
+    log4perl.appender.info_cron.layout.ConversionPattern : "%d{yyyy-MM-dd HH:mm:ss} %p %M %L :> %m%n"
+
+    log4perl.appender.supers_cron          : Log::Log4perl::Appender::File
+    log4perl.appender.supers_cron.utf8     : 1
+    log4perl.appender.supers_cron.filename : "/var/log/api_checker/supers_cron.log"
+    log4perl.appender.supers_cron.umask    : 0000
+    log4perl.appender.supers_cron.recreate : true
+    log4perl.appender.supers_cron.create_at_logtime : true
+    log4perl.appender.supers_cron.layout   : PatternLayout::Multiline
+    log4perl.appender.supers_cron.layout.ConversionPattern : "%d{yyyy-MM-dd HH:mm:ss} %p %M %L :> %m%n"
+
+    log4perl.appender.price_cron          : Log::Log4perl::Appender::File
+    log4perl.appender.price_cron.utf8     : 1
+    log4perl.appender.price_cron.filename : "/var/log/api_checker/price_cron.log"
+    log4perl.appender.price_cron.umask    : 0000
+    log4perl.appender.price_cron.recreate : true
+    log4perl.appender.price_cron.create_at_logtime : true
+    log4perl.appender.price_cron.layout   : PatternLayout::Multiline
+    log4perl.appender.price_cron.layout.ConversionPattern : "%d{yyyy-MM-dd HH:mm:ss} %p %M %L :> %m%n"
+
+    log4perl.appender.corp_cron          : Log::Log4perl::Appender::File
+    log4perl.appender.corp_cron.utf8     : 1
+    log4perl.appender.corp_cron.filename : "/var/log/api_checker/corp_cron.log"
+    log4perl.appender.corp_cron.umask    : 0000
+    log4perl.appender.corp_cron.recreate : true
+    log4perl.appender.corp_cron.create_at_logtime : true
+    log4perl.appender.corp_cron.layout   : PatternLayout::Multiline
+    log4perl.appender.corp_cron.layout.ConversionPattern : "%d{yyyy-MM-dd HH:mm:ss} %p %M %L :> %m%n"
+
+    log4perl.appender.stdout        : Log::Log4perl::Appender::Screen
+    log4perl.appender.stdout.layout : Log::Log4perl::Layout::NoopLayout
+    log4perl.appender.stdout.stderr : 0
+
+    log4perl.appender.stderr        : Log::Log4perl::Appender::Screen
+    log4perl.appender.stderr.layout : Log::Log4perl::Layout::NoopLayout
+    log4perl.appender.stderr.stderr : 1

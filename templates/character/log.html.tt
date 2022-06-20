@@ -1,0 +1,46 @@
+[%
+    WRAPPER 'layouts/default.html.tt'
+    title = 'API Checker &mdash; Большой Брат следит за тобой, %username%'
+%]
+[% PROCESS 'layouts/blocks.html.tt' %]
+<a href="/character/[% char_id %]">&larr; к общей информации о пилоте</a>
+<h1>[% header %]</h1>
+
+[%  h.bootstrap_pagination( page, page_count, {
+    round => 4,
+    outer => 2,
+    class => 'pagination-md',
+    query => "&by=$by&sort=$sort"
+    start => 0,
+    param => 'page' } ) %]
+[% revert_sort = sort == 'DESC' ? 'ASC' : 'DESC' %]
+<table class="table table-striped table-condensed tablesorter">
+    <thead>
+    <tr>
+        <th><a href="?page=[% page %]&by=date&sort=[% revert_sort %]">Дата</a></th>
+        <th><a href="?page=[% page %]&by=url&sort=[% revert_sort %]">URL</a></th>
+        <th><a href="?page=[% page %]&by=status&sort=[% revert_sort %]">Статус</a></th>
+        <th><a href="?page=[% page %]&by=content&sort=[% revert_sort %]">Текст</a></th>
+    </tr>
+    </thead>
+    <tbody>
+    [% FOREACH record = logs %]
+      <tr>
+          <td>[% record.date %]</td>
+          <td>[% record.url %]</td>
+          <td>[% record.status %]</td>
+          <td>[% record.content %]</td>
+      </tr>
+    [% END %]
+    </tbody>
+</table>
+[%  h.bootstrap_pagination( page, page_count, {
+    round => 4,
+    outer => 2,
+    class => 'pagination-md',
+    query => "&by=$by&sort=$sort"
+    start => 0,
+    param => 'page' } ) %]
+
+[% END %]
+

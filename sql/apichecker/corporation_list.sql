@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS `corporation_list` (
+  `corporation_id` bigint(20) NOT NULL,
+  `corporation_name` varchar(100) NOT NULL,
+  `ticker` varchar(6) NOT NULL,
+  `ceo_id` bigint(20) NOT NULL,
+  `ceo_name` varchar(80) NOT NULL,
+  `alliance_id` bigint(20) NOT NULL,
+  `faction_id` bigint(20) NOT NULL,
+  `description` text NOT NULL,
+  `member_count` int(11) NOT NULL,
+  `shares` int(11) NOT NULL,
+  `station_id` bigint(20) NOT NULL,
+  `station_name` varchar(120) NOT NULL,
+  `url` varchar(250) NOT NULL,
+  `tax_rate` float(3,2) NOT NULL,
+  `logo` text NOT NULL,
+  `cached_until` datetime NOT NULL,
+  PRIMARY KEY (`corporation_id`),
+  KEY `alliance_id` (`alliance_id`),
+  KEY `faction_id` (`faction_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -1,0 +1,19 @@
+---
+file_uploads:
+    max_size: 20
+    path: /www/file_uploads/
+    exts: 
+        - 'jpg'
+        - 'jpeg'
+        - 'png'
+        - 'bmp'
+        - 'gif'
+        - 'pdf'
+        - 'txt'
+        - 'gz'
+        - 'zip'
+        - 'rar'
+        - 'xls'
+        - 'doc'
+        - 'docx'
+        - 'csv'

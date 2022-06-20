@@ -1,0 +1,23 @@
+CREATE TABLE `character_info` (
+ `character_id` bigint(20) NOT NULL,
+ `character_name` varchar(100) NOT NULL,
+ `alliance_id` bigint(20) NOT NULL,
+ `corporation_id` bigint(20) NOT NULL,
+ `alliance` varchar(100) NOT NULL,
+ `corporation` varchar(100) NOT NULL,
+ `race` varchar(50) NOT NULL,
+ `bloodline` varchar(50) NOT NULL,
+ `skill_points` int(11) NOT NULL,
+ `ship_type_id` int(11) NOT NULL,
+ `account_balance` decimal(20,2) NOT NULL,
+ `last_known_location` varchar(100) NOT NULL,
+ `alliance_date` datetime NOT NULL,
+ `corporation_date` datetime NOT NULL,
+ `ship_type_name` varchar(100) NOT NULL,
+ `security_status` decimal(2,2) NOT NULL,
+ `cached_until` datetime NOT NULL,
+ PRIMARY KEY (`character_id`),
+ KEY `alliance_id` (`alliance_id`),
+ KEY `corporation_id` (`corporation_id`),
+ KEY `cached_until` (`cached_until`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8

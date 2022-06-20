@@ -1,0 +1,135 @@
+[%
+    WRAPPER 'layouts/default.html.tt'
+    title = 'API Checker &mdash; Большой Брат следит за тобой, %username%'
+%]
+<h1>[% header %]</h1>
+
+<a href="#addMoon" role="button" class="btn btn-primary" data-toggle="modal">Добавить мунмат луну</a>
+<div class="clearfix"></div>
+
+<div id="filter-bar"></div>
+<table id="tbl" data-toggle="table" data-sort-name="id" data-sort-order="desc" data-toolbar="#filter-bar" data-show-columns="true" data-show-filter="true" data-search="true" data-pagination="true" data-page-list="[50, 100, 200]" data-page-size="200">
+    <thead>
+        <tr>
+            <th data-field="id" data-align="right" data-sortable="true">#</th>
+            <th data-field="region_id" data-align="left" data-sortable="true" data-visible="true">Регион</th>
+            <th data-field="const_id" data-align="left" data-sortable="true" data-visible="true">Конста</th>
+            <th data-field="location_id" data-align="left" data-sortable="true" data-visible="true">Система</th>
+            <th data-field="moon_item_id" data-align="left" data-sortable="true" data-visible="true">Луна</th>
+            <th data-field="mat_name" data-align="left" data-sortable="true">Мунмат</th>
+            <th data-field="mat_type_id" data-align="left" data-sortable="true" data-visible="false">МунматID</th>
+            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Операции</th>
+        </tr>
+    </thead>
+    [% FOREACH m = moons %]
+        <tr>
+            <td>[% m.id %]</td>
+            <td>[% m.region_name %]</td>
+            <td>[% m.const_name %]</td>
+            <td>[% m.location_name %]</td>
+            <td>[% m.moon_name %]</td>
+            <td>[% m.moon_mat_name || 'No materials' %]</td>
+            <td>[% m.mat_type_id %]</td>
+        </tr>
+    [% END %]
+</table>
+
+<div id="addMoon" class="modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form class="form-horizontal" id="add-key-form" method="POST">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="addKeyLabel">Добавление Мунмата</h3>
+          </div>
+          <div class="modal-body">
+                    <fieldset>
+                    <div class="form-group">
+                      <label class="col-md-4 control-label" for="login">Луна</label>
+                      <div class="col-md-4">
+                      <input type="hidden" value="" name="moon_id" id="moon_id" />
+                      <input type="text" id="moon" name="moon" required="" class="form-control input-md" />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-md-4 control-label" for="password">Мунмат</label>
+                      <div class="col-md-4">
+                      <select id="moon_mat" name="moon_mat" required="" autocomplete="on" class="form-control input-md">
+                        <option value="0">No materials</option>
+                        [% FOREACH mat = moon_mats %]
+                            <option value="[% mat.typeID %]">[% mat.typeName %]</option>
+                        [% END %]
+                      </select>
+                      </div>
+                    </div>
+                    </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Закрыть</button>
+            <button class="btn btn-primary add-moon-form-submit" name="save">Сохранить</button>
+          </div>
+      </form>
+      </div>
+    </div>
+</div>
+
+
+<div id="EditMoon" class="modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form class="form-horizontal" id="edit-moon-form" method="POST" action="/starbase/edit_moon">
+            <input type="hidden" name="moon_uniq_id" id="moon_uniq_id" value="" />
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="EditMoonLabel"><small>Редактирование луны</small> <span></span></h3>
+          </div>
+          <div class="modal-body">
+                    <fieldset>
+                    <div class="form-group">
+                          <label class="col-md-4 control-label" for="password">Мунмат</label>
+                          <div class="col-md-4">
+                              <select id="moon_mat_select" name="moon_mat" required="" autocomplete="on" class="form-control input-md">
+                                    <option value="0">No materials</option>
+                                [% FOREACH mat = moon_mats %]
+                                    <option value="[% mat.typeID %]">[% mat.typeName %]</option>
+                                [% END %]
+                              </select>
+                          </div>
+                    </div>
+                    </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Закрыть</button>
+            <button class="btn btn-primary edit-moon-form-submit" name="save">Сохранить</button>
+          </div>
+      </form>
+      </div>
+    </div>
+</div>
+
+<script>
+    function operateFormatter(value, row, index) {
+        return [
+            '<a class="edit_moon ml10" href="#EditMoon" title="Edit moon">',
+                '<i class="glyphicon glyphicon-edit"></i>',
+            '</a>'
+        ].join(' ');
+    }
+
+    window.operateEvents = {
+        'click .edit_moon': function (e, value, row, index) {
+            $('#EditMoonLabel span').text(row['moon_item_id']);
+            $('#moon_mat_select').val(row['mat_type_id']);
+            $('#moon_uniq_id').val(row['id']);
+            $('#EditMoon').modal('toggle');
+         }
+        // 'click .delete_moon': function (e, value, row, index) {
+        //     if (window.confirm("Точно удалить данные о луне " + row['moon_item_id'] + '?' ) ) {
+        //         location.href = "/strabase/del_moon?id=" + row['id'];
+        //     }
+        // }
+    }; 
+
+</script>
+
+[% END %]

@@ -1,0 +1,32 @@
+[%
+    WRAPPER 'layouts/default.html.tt'
+    title = 'API Checker &mdash; Большой Брат следит за тобой, %username%'
+%]
+<a href="/character/[% char_id %]">&larr; к общей информации о пилоте</a>
+<h1>[% header %]</h1>
+<h6><small>Обновится не ранее</small></h6>
+<form id="search_form" action="" method="get">
+<label>Поиск по ассетам: <input type="text" class="form-control input-sm" name="asset_name" id="asset_name" value="[% search_name %]" /></label>
+<input type="submit" id="search_asset" class="btn btn-default input-sm" value="Найти" />
+<input type="button" id="reset" class="btn btn-default input-sm" value="Очистить" />
+</form>
+[% IF search_result %]
+    <h3>Результаты поиска</h3>
+    <table class="table table-striped table-condensed">
+        <tr>
+            <th>Место</th><th>Предмет</th><th>Кол-во</th><th>Цена</th>
+        </tr>
+        [% FOREACH item = search_result %]
+        <tr><td>[% item.location_name || item.station_name %]</td><td>[% item.type_name %]</td><td>[% item.quantity %]</td><td>[% item.sell_price | format_sum %] ISK</td></tr>
+        [% END %]
+    </table>
+[% END %]
+<br /><br />
+<ul class="assets" style="list-style: none; width: 800px;">
+  [% FOREACH loc = locations %]
+    <li class="assets_node" char="[% char_id %]" rel="[% loc.location_id %]"><span><i class="glyphicon glyphicon-folder-close"></i> [% loc.location_name || loc.station_name %]</span>  <span class="asset_price">[% loc.sell_price | format_sum %] ISK</span>
+    <ul class="hide assets_list_[% loc.location_id %]"></ul>
+    </li>
+  [% END %]
+</ul>
+[% END %]

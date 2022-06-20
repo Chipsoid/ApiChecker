@@ -1,0 +1,91 @@
+[% 
+    WRAPPER 'layouts/default.html.tt' 
+    title = 'API Checker &mdash; Большой Брат следит за тобой, %username%'
+%]
+<h1>[% header %]</h1>
+[% IF c.session.roles.character %]
+
+[%  h.bootstrap_pagination( page, page_count, {
+    round => 4,
+    outer => 2,
+    class => 'pagination-md',
+    query => "&by=$by&sort=$sort"
+    start => 0,
+    param => 'page' } ) %]
+[% revert_sort = sort == 'DESC' ? 'ASC' : 'DESC' %]
+<form action="" method="GET" id="search_form">
+[% IF accounts.size > 0 %]
+<table class="table table-striped table-condensed tablesorter" id="chars_table">
+    <thead>
+    <tr>
+        <th>
+            <input type="hidden" name="page" value="[% page %]" />
+            <input type="hidden" name="by" value="[% by %]" />
+            <input type="hidden" name="sort" value="[% sort %]" />
+            <input type="text" class="form-control input-md" name="search_key_id"           id="search_key"  value="[% search.key_id %]" /></th>
+        <th><input type="text" class="form-control input-md" name="search_character_id"     id="search_id"   value="[% search.character_id %]" /></th>
+        <th><input type="text" class="form-control input-md" name="search_character_name"   id="search_name" value="[% search.character_name %]" /></th>
+        <th><input type="text" class="form-control input-md" name="search_corporation_name" id="search_corp" value="[% search.corporation_name %]" /></th>
+        <th><input type="text" class="form-control input-md" name="search_alliance_name"    id="search_ally" value="[% search.alliance_name %]" /></th>
+        <th style="vertical-align: middle; text-align: center;"><input name="search" type="submit" id="search" class="btn btn-default" value="Поиск" /></th>
+        <th><input type="button" id="reset" class="btn btn-default" value="Очистить" /></form></th>
+    </tr>
+    <tr>
+        <th style="width: 80px;"><a href="?page=[% page %]&by=key_id&sort=[% revert_sort %]">key_id</a></th>
+        <th style="width: 100px;"><a href="?page=[% page %]&by=character_id&sort=[% revert_sort %]">char_id</a></th>
+        <th><a href="?page=[% page %]&by=character_name&sort=[% revert_sort %]">Имя</a></th>
+        <th><a href="?page=[% page %]&by=corporation_name&sort=[% revert_sort %]">Корпорация</a></th>
+        <th><a href="?page=[% page %]&by=alliance_name&sort=[% revert_sort %]">Альянс</a></th>
+        <th style="width: 200px;">Оплачен до</th>
+        <th style="width: 100px;">ключ</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    [% current_key = account.0.key_id %]
+    [% FOREACH account = accounts %]
+    <tr 
+        [% IF current_key != account.key_id %]
+            [% current_key = account.key_id %]
+            class="separator_key"
+        [% END %]
+    >
+        <td>[% account.key_id %]</td>
+        <td>[% account.character_id %]</td>
+        <td><img src="http://image.eveonline.com/Character/[% account.character_id %]_32.jpg" /> <a href="/character/[% account.character_id %]">[% account.character_name %]</a></td>
+        <td class="[% account.is_npc ? 'is_npc' : '' %]">[% account.corporation_name %] [% IF account.ticker %][[% account.ticker %]][% END %]</td>
+        <td>[% account.alliance_name %]</td>
+        <td class="[% account.not_payed ? 'not_payed' : '' %]">[% account.paid_until %]</td>
+        <td class="[% account.status ? '' : 'not_payed' %]">[% account.status ? 'валидный' : 'не валидный'  %]</td>
+        <td style="vertical-align: middle; text-align:center; width: 70px;"><i class="glyphicon glyphicon-star[% account.is_favorite ? '' : '-empty' %] add_to_favorites" rel="[% account.character_id %]" title="Добавить в избранное" style="cursor: pointer"></i>
+        <i class="glyphicon glyphicon-tag modify_tag tag_[% account.character_id %] [% tag_types.${account.tag_id} || 'grey' %]" rel="[% account.character_id %]" style="cursor: pointer"></i>
+        <i class="glyphicon glyphicon-plane modify_bigboy [% account.is_bigboy == 0 ? 'grey' : 'black' %]" rel="[% account.character_id %]" style="cursor: pointer" title="Водитель супера"></i>
+        <div class="posrel">
+            <div class="list_tags tags_for_[% account.character_id %]">
+                <i class="glyphicon glyphicon-tag change_tag grey"   rel="[% account.character_id %]" data-content="0" style="cursor: pointer" title="Без метки"></i>
+                <i class="glyphicon glyphicon-tag change_tag red"    rel="[% account.character_id %]" data-content="1" style="cursor: pointer" title="Красная"></i>
+                <i class="glyphicon glyphicon-tag change_tag green"  rel="[% account.character_id %]" data-content="2" style="cursor: pointer" title="Зеленая"></i>
+                <i class="glyphicon glyphicon-tag change_tag blue"   rel="[% account.character_id %]" data-content="3" style="cursor: pointer" title="Синяя"></i>
+                <i class="glyphicon glyphicon-tag change_tag purple" rel="[% account.character_id %]" data-content="4" style="cursor: pointer" title="Пурпурная"></i>
+            </div>
+        </div>
+        
+        </td>
+    </tr>
+    [% END %]
+    </tbody>
+</table>
+[% ELSIF c.stash.action == 'favorites' %]
+<h2>Нет персонажей, добавленных в избранное</h2>
+[% END %]
+[%  h.bootstrap_pagination( page, page_count, {
+    round => 4,
+    outer => 2,
+    class => 'pagination-md',
+    query => "&by=$by&sort=$sort"
+    start => 0,
+    param => 'page' } ) %]
+
+[% END %]
+
+[% END %]

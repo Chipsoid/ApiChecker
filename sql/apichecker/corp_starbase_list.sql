@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS `corp_starbase_list` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `corp_key_id` int(11) NOT NULL,
+  `item_id` bigint(20) NOT NULL,
+  `moon_id` bigint(20) NOT NULL,
+  `location_id` bigint(20) NOT NULL,
+  `type_id` int(11) NOT NULL,
+  `standing_owner_id` bigint(20) NOT NULL,
+  `online_timestamp` datetime NULL,
+  `state_timestamp` datetime NULL,
+  `state` int(11) NOT NULL,
+  `cached_until` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `corp_key_id` (`corp_key_id`),
+  KEY `item_id` (`item_id`),
+  KEY `type_id` (`type_id`),
+  KEY `standing_owner_id` (`standing_owner_id`),
+  KEY `location_id` (`location_id`),
+  KEY `cached_until` (`cached_until`),
+  KEY `moon_id` (`moon_id`),
+  KEY `state` (`state`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;

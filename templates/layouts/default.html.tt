@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<title>[% title %]</title>
+	<meta charset="utf-8" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="/css/bootstrap-theme.min.css" rel="stylesheet" />
+	<link href="/css/apichecker.css" rel="stylesheet" />
+    <link href="/css/theme.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/js/bootstrap-table.min.css" />
+
+
+</head>
+<body role="document">
+  <!-- Fixed navbar -->
+  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Навигация</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">API Checker</a>
+        </div>
+        [% IF c.session.id %]
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            [% IF c.session.roles.api %]<li><a href="/favorites">Избранное</a></li>[% END %]
+            [% IF c.session.roles.bigboys %]<li><a href="/bigboys">Супера</a></li>[% END %]
+            [% IF c.session.roles.assets %]<li><a href="/assets">Ассеты</a></li>[% END %]
+            [% IF c.session.roles.starbase || c.session.roles.industry %]
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Индустрия <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    [% IF c.session.roles.industry %]<li><a href="/industry/">Произовдство</a></li>[% END %]
+                    [% IF c.session.roles.starbase %]<li><a href="/starbase/">ПОСы</a></li>[% END %]
+                    [% IF c.session.roles.moons %]<li><a href="/starbase/moons">Луны</a></li>[% END %]
+                </ul>
+            </li>
+            [% END %]
+            [% IF c.session.roles.api || c.session.roles.users || c.session.roles.files || c.session.roles.ts3 || c.session.roles.forum %]
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Управление <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                [% IF c.session.roles.api %]<li><a href="/api/">API-ключи</a></li>[% END %]
+                [% IF c.session.roles.users %]<li><a href="/users/">Пользователи</a></li>[% END %]
+                [% IF c.session.roles.files %]<li><a href="/files/admin">Файлы</a></li>[% END %]
+                [% IF c.session.roles.ts3 %]<li><a href="/ts3">TeamSpeak 3</a></li>[% END %]
+                [% IF c.session.roles.forum %]<li><a href="/forum">Forum</a></li>[% END %]
+              </ul>
+            </li>
+            [% END %]
+            [% IF c.session.roles.contract %]<li><a href="/contracts">Контракты</a></li>[% END %]
+            <li><a href="/logout/">Выход ([% c.session.name %])</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+        [% END %]
+      </div>
+    </div>
+  <div class="container wrapper" role="main">
+
+      [% IF c.session.errors && c.session.errors.size > 0 %]
+          [% FOREACH error =  c.session.errors %]
+          <div class="alert alert-[% error.type %]">
+             <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+              [% error.text %]
+          </div>
+          [% END %]
+          [% c.session.errors = undef %]
+      [% END %]
+
+      [% IF status %]
+          <div class="alert alert-info">
+              <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+              [% status %]
+          </div>
+      [% END %]
+
+		[% content %]
+    <div class="push"></div>
+    
+	</div>
+  <div class="container">
+    <div class="well footer">
+      &copy; 2014 &mdash; 2016
+    </div>
+  </div> 
+<script src="/js/jquery-2.1.1.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/tablesorter.js"></script>
+<script src="/js/tablesorter.widgets.js"></script>
+<script src="/js/bootstrap-table.min.js"></script>
+<script src="/js/bootstrap-table-filter.min.js"></script>
+<script src="/js/functions.js"></script>
+<script src="/js/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="/js/jquery-ui.min.css">
+<style>
+.ui-front {z-index:99999!important;}
+</style>
+</body>
+</html>
+
+
+

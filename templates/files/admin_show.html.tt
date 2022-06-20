@@ -1,0 +1,69 @@
+[%
+    WRAPPER 'layouts/default.html.tt'
+    title = 'Файлы'
+%]
+<a href="/files/admin/">&larr; к списку файлов</a>
+
+<h1>[% header %]</h1>
+
+[% UNLESS c.session.roles.files %]
+    [% RETURN %]
+[% END %]
+
+[%  h.bootstrap_pagination( page, page_count, {
+    round => 4,
+    outer => 2,
+    class => 'pagination-md',
+    query => "&by=$by&sort=$sort"
+    start => 0,
+    param => 'page' } ) %]
+[% revert_sort = sort == 'DESC' ? 'ASC' : 'DESC' %]
+
+
+<form action="" method="GET" id="search_form">
+[% IF list_downloads.size > 0 %]
+<table class="table table-striped table-condensed tablesorter" id="chars_table">
+    <thead>
+    <tr>
+        <th style="width: 80px;"><a href="?page=[% page %]&by=id&sort=[% revert_sort %]">id</a></th>
+        <th><a href="?page=[% page %]&by=filename&sort=[% revert_sort %]">IP</a></th>
+        <th><a href="?page=[% page %]&by=size&sort=[% revert_sort %]">UA</a></th>
+        <th><a href="?page=[% page %]&by=upload_date&sort=[% revert_sort %]">Дата</a></th>
+        <th>Ts3</th>
+        <th>Forum</th>
+    </tr>
+    </thead>
+    <tbody>
+    [% FOREACH file = list_downloads %]
+    <tr>
+        <td>[% file.id %]</td>
+        <td><a href="https://geoiptool.com/ru/?ip=[% file.ip %]" target="_blank">[% file.ip %]</a></td>
+        <td>[% file.ua %]</td>
+        <td style="min-width: 180px;">[% file.date %]</td>
+        <td style="min-width: 200px;">
+        [% FOREACH user = file.users %]
+            <span title="[% user.1 %]">[% user.2 %]</span><br />
+        [% END %]
+        </td>
+        <td style="min-width: 200px;">
+        [% FOREACH user = file.forum %]
+            <span title="[% user.1 %]">[% user.1 %]</span><br />
+        [% END %]
+        </td>
+    </tr>
+    [% END %]
+    </tbody>
+</table>
+[% END %]
+
+
+[%  h.bootstrap_pagination( page, page_count, {
+    round => 4,
+    outer => 2,
+    class => 'pagination-md',
+    query => "&by=$by&sort=$sort"
+    start => 0,
+    param => 'page' } ) %]
+[% revert_sort = sort == 'DESC' ? 'ASC' : 'DESC' %]
+
+[% END %]

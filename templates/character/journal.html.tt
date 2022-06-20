@@ -1,0 +1,87 @@
+[%
+    WRAPPER 'layouts/default.html.tt'
+    title = 'API Checker &mdash; Большой Брат следит за тобой, %username%'
+%]
+[% PROCESS 'layouts/blocks.html.tt' %]
+<a href="/character/[% char_id %]">&larr; к общей информации о пилоте</a>
+<h1>[% header %]</h1>
+<h6><small>Обновится не ранее [% journal.0.cached_until %]</small></h6>
+
+[% MACRO contragent BLOCK %]
+    [% SWITCH ref_id %]
+        [% CASE 42 %]
+            [% client_name %] [% info( info = char_info.$owner_name1, extra = "Купил в: <b>" _ other.station_name _ "</b><br />Товар: <b>" _ other.type_name _ "</b><br />Кол-во: <b>" _ other.quantity _ '</b>' ) %]
+        [% CASE 2 %]
+            [% client_name %] [% info( info = char_info.$owner_name1, extra = "Продал в: <b>" _ other.station_name _ "</b><br />Товар: <b>" _ other.type_name _ "</b><br />Кол-во: <b>" _ other.quantity _ '</b>' ) %]
+        [% CASE 35 %]
+            [% arg_name1 %] [% info( info = char_info.$arg_name1 ) IF arg_name1 != char_name && arg_name1 != 'CONCORD'  %]
+        [% CASE 10 %]
+            [% IF incoming %]
+              [% owner_name1 %] [% info( info = char_info.$owner_name1, extra = "Сделка в: $arg_name1" ) %]
+            [% ELSE %]
+              [% owner_name2 %] [% info( info = char_info.$owner_name2, extra = "Сделка в: $arg_name1" ) %]
+            [% END %]
+        [% CASE %]
+            [% IF char_name == owner_name1  %]
+                [% owner_name2 %] 
+            [% ELSE %]
+                [% owner_name1 %] 
+            [% END %]
+
+            
+    [% END %]
+
+[% END %]
+
+[%  h.bootstrap_pagination( page, page_count, {
+    round => 4,
+    outer => 2,
+    class => 'pagination-md',
+    query => "&by=$by&sort=$sort"
+    start => 0,
+    param => 'page' } ) %]
+[% revert_sort = sort == 'DESC' ? 'ASC' : 'DESC' %]
+
+<select id="filter_ref_name" class="select_filter">
+    <option value="/character/journal/[% char_id %]/?page=[% page %]&by=date&sort=[% revert_sort %]">---</option>
+    [% FOREACH type = ref_types %]
+      <option value="/character/journal/[% char_id %]/?page=[% page %]&by=date&sort=[% revert_sort %]&ref_type_id=[% type.ref_type_id %]"
+      [% ref_type_id == type.ref_type_id ? 'selected="selected"' : '' %]
+      >[% type.ref_name %]</option>
+    [% END %]
+</select>
+<table class="table table-striped table-condensed tablesorter">
+    <thead>
+    <tr>
+        <th width="200"><a href="?page=[% page %]&by=date&sort=[% revert_sort %]&ref_type_id=[% ref_type_id %]">Дата</a></th>
+        <th width="200"><a href="?page=[% page %]&by=ref_name&sort=[% revert_sort %]&ref_type_id=[% ref_type_id %]">Тип</a></th>
+        <th style="text-align:center;"><a href="?page=[% page %]&by=owner_name1&sort=[% revert_sort %]&ref_type_id=[% ref_type_id %]">Контрагент</a></th>
+        <th style="text-align:center;"><a href="?page=[% page %]&by=amount&sort=[% revert_sort %]&ref_type_id=[% ref_type_id %]">Сумма</a></th>
+        <th style="text-align:center;"><a href="?page=[% page %]&by=balance&sort=[% revert_sort %]&ref_type_id=[% ref_type_id %]">Баланс</a></th>
+        <th width="200">Описание</th>
+    </tr>
+    </thead>
+    <tbody>
+    [% FOREACH record = journal %]
+      <tr>
+          <td width="200">[% record.date %]</td>
+          <td width="200">[% record.ref_name %]</td>
+          <td>[% contragent( incoming = record.amount > 0 ? 1 : 0,  ref_id = record.ref_type_id, owner_name1=record.owner_name1, arg_name1 = record.arg_name1, owner_name2 = record.owner_name2, arg_name2 = record.arg_name2, client_name = record.client_name, other = record ) %]</td>
+          <td class="text-right [% record.amount > 0 ? 'positive' : 'negative'  %]">[% record.amount | format_sum %]</td>
+          <td class="text-right">[% record.balance | format_sum %]</td>
+          <td style="width:200px; max-width: 200px">[% record.reason %]</td>
+      </tr>
+    [% END %]
+    </tbody>
+</table>
+[%  h.bootstrap_pagination( page, page_count, {
+    round => 4,
+    outer => 2,
+    class => 'pagination-md',
+    query => "&by=$by&sort=$sort"
+    start => 0,
+    param => 'page' } ) %]
+
+
+[% END %]
+

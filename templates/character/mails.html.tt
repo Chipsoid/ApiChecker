@@ -1,0 +1,80 @@
+[%
+    WRAPPER 'layouts/default.html.tt'
+    title = 'API Checker &mdash; Большой Брат следит за тобой, %username%'
+%]
+[% PROCESS 'layouts/blocks.html.tt' %]
+<a href="/character/[% char_id %]">&larr; к общей информации о пилоте</a>
+<h1>[% header %]</h1>
+<h6><small>Обновится не ранее [% mails.0.cached_until %]</small></h6>
+
+[% IF mail_lists.size > 0 %]
+<h4>Подключенные рассылки</h4>
+<p>[% FOREACH list = mail_lists %][% list.mail_list_name %], [% END %]</p>
+[% END %]
+
+[%  h.bootstrap_pagination( page, page_count, {
+    round => 4,
+    outer => 2,
+    class => 'pagination-md',
+    query => "&by=$by&sort=$sort"
+    start => 0,
+    param => 'page' } ) %]
+[% revert_sort = sort == 'DESC' ? 'ASC' : 'DESC' %]
+<table class="table table-striped table-condensed tablesorter" id="mails_table">
+    <thead>
+    <tr>
+        <th><a href="?page=[% page %]&by=sent_date&sort=[% revert_sort %]">Дата</a></th>
+        <th><a href="?page=[% page %]&by=sender_name&sort=[% revert_sort %]">Отправитель</a></th>
+        <th><a href="?page=[% page %]&by=to_name&sort=[% revert_sort %]">Получатель</a></th>
+        <th><a href="?page=[% page %]&by=title&sort=[% revert_sort %]">Заголовок</a></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    [% FOREACH mail = mails %]
+      [% sender = mail.sender_name; reciever = mail.to_name; %]
+      <tr rel="[% mail.message_id %]">
+          <td class="sent_date_[% mail.message_id %]">[% mail.sent_date %]</td>
+          <td class="sender_name_[% mail.message_id %]">[% mail.sender_name %] [% info( info = char_info.$sender ) IF mail.sender_id != char_id  %]</td>
+          <td class="to_[% mail.message_id %]">[% mail.to_name || mail.mail_list_name || mail.to_character_ids || mail.to_corp_or_alliance_id || to_list_id || 'Неизвестный список рассылки' %] [% info( info = char_info.$reciever ) IF mail.to_character_ids && mail.to_character_ids != char_id %]</td>
+          <td class="title_[% mail.message_id %]">[% mail.title %]</td>
+          <td>
+              <a href="#showMail" data-toggle="modal" class="show_mail_body" rel="[% mail.message_id %]"><i class="glyphicon glyphicon-search"></i></a>
+              <div class="body_[% mail.message_id %] hide">[% mail.body_formatted %]</div>
+          </td>
+      </tr>
+    [% END %]
+    </tbody>
+</table>
+[%  h.bootstrap_pagination( page, page_count, {
+    round => 4,
+    outer => 2,
+    class => 'pagination-md',
+    query => "&by=$by&sort=$sort"
+    start => 0,
+    param => 'page' } ) %]
+
+<div id="showMail" class="modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="showMailLabel"></h3>
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                  <div class="col-md-3">Отправитель: </div><div class="col-md-7 showMailFrom"></div>
+              </div>
+              <div class="row">
+                  <div class="col-md-3">Получатель: </div><div class="col-md-7 showMailTo"></div>
+              </div>
+              <div class="row">
+                  <div class="col-md-10 showMailBody well"></div>
+              </div>
+          </div>
+      </div>
+    </div>
+</div>
+
+[% END %]
+

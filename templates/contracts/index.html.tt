@@ -1,0 +1,181 @@
+[%
+    WRAPPER 'layouts/default.html.tt'
+    title = 'API Checker &mdash; Большой Брат следит за тобой, %username%'
+%]
+[% PROCESS 'layouts/blocks.html.tt' %]
+<div class="row">
+  <table id="contracts_table"
+         data-search="true"
+         data-show-toggle="true"
+         data-show-columns="true"
+         data-show-export="true"
+         data-pagination="true"
+         data-id-field="id"
+         data-page-list="[50, 100, 500, ALL]"
+         data-page-size="500"
+         data-sort-name="date_issued"
+         data-sort-order="desc"
+        >
+
+      <thead>
+      <tr>
+          <th data-field="name">Пилот</th>
+          <th data-field="contract_id">ID</th>
+          <th data-field="date_issued" width="200">Создан</th>
+          <th data-field="type" width="200">Тип</th>
+          <th data-field="availability" style="text-align:center;">Доступность</th>
+          <th data-field="status" width="200">Статус</th>
+          <th data-field="issuer_name" style="text-align:center;">Создал</th>
+          <th data-field="assignee_name" style="text-align:center;">На кого</th>
+          <th data-field="acceptor_name" style="text-align:center;">Принял</th>
+          <th data-field="price" style="text-align:center;">Сумма</th>
+          <th data-field="volume" style="text-align:center;">Объем</th>
+
+          <th data-field="date_accepted" width="200">Принят</th>
+          <th data-field="items_count" width="200">Содержимое</th>
+          <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      [% FOREACH char_data = output %]
+        [% FOREACH contract = char_data.contracts %]
+        <tr>
+            <td>[% char_data.name %]</td>
+            <td>[% contract.contract_id %]</td>
+            <td width="200">[% contract.date_issued %]</td>
+            <td width="200">[% contract.type %]</td>
+            <td class="text-center">[% contract.availability %]</td>
+            <td style="width:200px;">[% contract.status %]</td>
+            <td>[% contract.issuer_name %] [% # info( info = contract.issuer_id ) %]</td>
+            <td>[% contract.assignee_name %]</td>
+            <td>[% contract.acceptor_name %]</td>
+            <td class="text-right" data-value="[% contract.price %]">[% contract.price | format_sum %]</td>
+            <td class="text-right">[% contract.volume %]&nbsp;m<sup>3</sup></td>
+            <td width="200">[% contract.date_accepted %]</td>
+            <td width='200'>[% contract.one_item_name || contract.items_count _ ' предметов' %]</td>
+            <td><a href="#showContract" data-toggle="modal" class="show_contract_body" rel="[% contract.contract_id %]" data-char="[% char_data.char_id %]"><i class="glyphicon glyphicon-search"></i></a>
+                <div class="body_[% contract.contract_id %] hide"></div></td>
+        </tr>
+        [% END %]
+      [% END %]
+      </tbody>
+  </table>
+</div>
+
+<div id="showContract" class="modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="showContractLabel"></h3>
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                  <div class="col-sm-3">Создал: </div><div class="col-sm-7 showContractIssuer"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">На: </div><div class="col-sm-7 showContractAssignee"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">Принял: </div><div class="col-sm-7 showContractAcceptor"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">Тип: </div><div class="col-sm-7 showContractType"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">Создан: </div><div class="col-sm-7 showContractIssued"></div>
+                  <div class="col-sm-3">Истекает: </div><div class="col-sm-7 showContractExpired"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">Принят: </div><div class="col-sm-7 showContractAccepted"></div>
+                  <div class="col-sm-3">Исполнен: </div><div class="col-sm-7 showContractCompleted"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">Создан на станции: </div><div class="col-sm-7 showContractStartStation"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">Принят на станции: </div><div class="col-sm-7 showContractEndStation"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">Дней на исполнение: </div><div class="col-sm-7 showContractNumDays"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">Цена: </div><div class="col-sm-7 showContractPrice"></div>
+                  <div class="col-sm-3">Вознаграждение: </div><div class="col-sm-7 showContractReward"></div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-3">Объем: </div><div class="col-sm-7 showContractVolume"></div>
+              </div>
+              <div class="row">
+                  <div class="modal-header">
+                      <h3 id="showContractItemsLabel">Предметы</h3>
+                  </div>
+                  <div class="col-sm-10 showContractBody"></div>
+              </div>
+          </div>
+      </div>
+    </div>
+</div>
+
+[% END %]
+
+<script>
+$("#contracts_table").bootstrapTable({
+            classes:  'table table-hover',
+            columns: [               
+                    {
+                        field: 'name',
+                        sortable: true,
+                        visible: false,
+                    },{
+                        field: 'contract_id',
+                        sortable: true,
+                        visible: false,
+                    },{
+                        field: 'date_issued',
+                        sortable: true,
+                    },{
+                        field: 'type',
+                        sortable: true,
+                    },{
+                        field: 'availability',
+                        sortable: true,
+                    },{
+                        field: 'status',
+                        sortable: true,
+                    },{
+                        field: 'issuer_name',
+                        sortable: true,
+                    },{
+                        field: 'assignee_name',
+                        sortable: true,
+                        visible: false,
+                    },{
+                        field: 'acceptor_name',
+                        sortable: true,
+                        visible: false,
+                    },{
+                        field: 'price',
+                        sortable: true,
+                    },{
+                        field: 'volume',
+                        sortable: true,
+                    },{
+                        field: 'date_accepted',
+                        sortable: true,
+                        visible: false,
+                    },{
+                        field: 'items_count',
+                        sortable: true,
+                        visible: true,
+                    }
+                ],
+          
+        });
+</script>
+<style>
+.row {
+  margin-left: -15px; 
+  margin-right: -15px;
+}
+</style>

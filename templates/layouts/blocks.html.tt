@@ -1,0 +1,13 @@
+[% MACRO info BLOCK %]
+    [% IF info.account_balance; balance = info.account_balance | format_sum; END; %]
+    <i class="glyphicon glyphicon-info-sign char_info_popover" title="[% info.character_name %] [% IF info.security_status; 'СС ' _ info.security_status; END; %]" data-content="
+    [% IF info.corporation %]
+        [% info.corporation %] <small>с [% info.corporation_date | format_date %]</small><br />
+    [% END %]
+    [% info.alliance ? 'Алли: ' _ info.alliance _ '<br />' : '' %]
+    [% info.account_balance && info.account_balance > 0 ? '$: ' _  balance  _ '<br />' : '' %]
+    [% info.ship_type_name ? 'Корабль: ' _ info.ship_type_name _ '<br />' : '' %]
+    [% info.last_known_location ? 'Система: ' _ info.last_known_location _ '<br />' : '' %]
+    [% extra %]
+    "></i>
+[% END %]

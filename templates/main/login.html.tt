@@ -1,0 +1,19 @@
+[% 
+    WRAPPER 'layouts/default.html.tt' 
+    title = 'API Checker &mdash; Большой Брат следит за тобой, %username%'
+%]
+[% IF message %]
+<div class="alert alert-warning">
+    [% message %]
+</div>
+[% END %]
+<div class="container">
+    <form class="form-signin" role="form" method="post">
+        <h2 class="form-signin-heading">Ты кто?</h2>
+        <input type="login" class="form-control" placeholder="логин" name="login" required autofocus>
+        <input type="password" class="form-control" placeholder="Пар0ль515" name="password" required>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Ну?</button>
+    </form>
+</div>
+
+[% END %]
